@@ -153,4 +153,98 @@ fn ownership() {
 
     let name3 = name2.clone(); // unless you want to copy so the data is newly reconstructed
     println!("{}", name3);
+
+    if name2 == name3 {
+        println!("same");
+    }
+}
+
+#[test]
+fn if_statement() {
+    let num = 9;
+
+    let res = if num > 5 {
+        "Greater than 5"
+    } else {
+        "Less than 5"
+    };
+
+    println!("{}", res);
+}
+
+#[test]
+fn im_looped() {
+    let mut count: u8 = 0;
+    loop {
+        count += 1;
+        if count > 10 {
+            break;
+        } else if count % 2 == 0 {
+            continue;
+        }
+
+        println!("Count now: {}", count);
+    }
+
+    let result = loop {
+        count += 1;
+        if count == 15 {
+            break count * 2;
+        }
+    };
+
+    println!("Result: {}", result);
+}
+
+#[test]
+fn looped_in_loop() {
+    let mut num = 1;
+    'outer: loop {
+        let mut i = 1;
+        'inner: loop {
+            if num > 10 {
+                break 'outer;
+            }
+
+            println!("{} * {} = {}", num, i, num * i);
+            i += 1;
+            if i > 10 {
+                println!("\n");
+                break 'inner;
+            }
+        }
+        num += 1;
+    }
+}
+
+#[test]
+fn while_looped() {
+    let mut count = 0;
+    while count < 10 {
+        count += 1;
+        println!("Hello {}", count);
+    }
+}
+
+#[test]
+fn for_looped() {
+    let arr = [1, 2, 3, 4, 5];
+    for i in arr {
+        println!("{}", i);
+    }
+
+    let my_range_exclusive = 1..11;
+    let my_range_inclusive = 1..=10;
+
+    println!("Start: {}", my_range_exclusive.start);
+    println!("End: {}", my_range_inclusive.end());
+
+    'outer: for i in my_range_inclusive {
+        for j in 1..11 {
+            if i % 2 == 0 {
+                continue 'outer;
+            }
+            println!("{} * {} = {}", i, j, i * j);
+        }
+    }
 }
