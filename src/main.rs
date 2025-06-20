@@ -236,8 +236,10 @@ fn for_looped() {
     let my_range_exclusive = 1..11;
     let my_range_inclusive = 1..=10;
 
-    println!("Start: {}", my_range_exclusive.start);
-    println!("End: {}", my_range_inclusive.end());
+    println!("Start exclusive: {}", my_range_exclusive.start);
+    println!("End exclusive: {}", my_range_exclusive.end);
+    println!("Start inclusive: {}", my_range_inclusive.start());
+    println!("End inclusive: {}", my_range_inclusive.end());
 
     'outer: for i in my_range_inclusive {
         for j in 1..11 {
