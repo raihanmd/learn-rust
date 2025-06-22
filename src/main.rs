@@ -1,32 +1,19 @@
 use std::io;
 
 fn main() {
-    let secret_number = 42;
-    println!("Guess the number!");
+    let factorial_of = 5;
+    let result = factorial(factorial_of);
+    println!("Factorial of {} is {}", factorial_of, result);
 
-    loop {
-        println!("Please input your guess.");
+    println!("Enter a number to calculate its factorial:");
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line");
 
-        let mut guess = String::new();
-
-        io::stdin()
-            .read_line(&mut guess)
-            .expect("Failed to read line");
-
-        let guess: u32 = match guess.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue,
-        };
-
-        if guess < secret_number {
-            println!("Too small!");
-        } else if guess > secret_number {
-            println!("Too big!");
-        } else {
-            println!("You win!");
-            break;
-        }
-    }
+    let num: u32 = input.trim().parse().expect("Please enter a valid number");
+    let result = factorial(num);
+    println!("Factorial of {} is {}", num, result);
 }
 
 #[test]
@@ -249,4 +236,17 @@ fn for_looped() {
             println!("{} * {} = {}", i, j, i * j);
         }
     }
+}
+
+fn factorial(n: u32) -> u32 {
+    if n < 1 {
+        return 0;
+    }
+
+    let mut result = 1;
+    for i in 1..=n {
+        result *= i;
+    }
+
+    result
 }
