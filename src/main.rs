@@ -1,90 +1,90 @@
 use std::io;
 
 fn main() {
-    let factorial_of = 5;
-    let result = factorial(factorial_of);
-    println!("Factorial of {} is {}", factorial_of, result);
+	let factorial_of = 5;
+	let result = factorial(factorial_of);
+	println!("Factorial of {} is {}", factorial_of, result);
 
-    println!("Enter a number to calculate its factorial:");
-    let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line");
+	println!("Enter a number to calculate its factorial:");
+	let mut input = String::new();
+	io::stdin()
+		.read_line(&mut input)
+		.expect("Failed to read line");
 
-    let num: u32 = input.trim().parse().expect("Please enter a valid number");
-    let result = factorial(num);
-    println!("Factorial of {} is {}", num, result);
+	let num: u32 = input.trim().parse().expect("Please enter a valid number");
+	let result = factorial(num);
+	println!("Factorial of {} is {}", num, result);
 }
 
 #[test]
 fn test() {
-    let name: String = String::from("Hello World");
-    let age = 20;
-    let tall: f32 = 1.8;
-    let tallf16 = tall as f64;
+	let name: String = String::from("Hello World");
+	let age = 20;
+	let tall: f32 = 1.8;
+	let tallf16 = tall as f64;
 
-    println!(
-        "Hello {}, i am {} years old, {} feet tall",
-        name, age, tallf16
-    );
+	println!(
+		"Hello {}, i am {} years old, {} feet tall",
+		name, age, tallf16
+	);
 
-    println!("Hello {}, i am {} years old, {} feet tall", name, age, tall);
+	println!("Hello {}, i am {} years old, {} feet tall", name, age, tall);
 }
 
 #[test]
 fn tuple() {
-    let mut tuple: (String, u8, f64) = (String::from("Hello World"), 20, 1.8);
+	let mut tuple: (String, u8, f64) = (String::from("Hello World"), 20, 1.8);
 
-    println!("{:?}", tuple);
+	println!("{:?}", tuple);
 
-    let a = tuple.0;
-    let b = tuple.1;
-    let c = tuple.2;
-    println!("{} {} {}", a, b, c);
+	let a = tuple.0;
+	let b = tuple.1;
+	let c = tuple.2;
+	println!("{} {} {}", a, b, c);
 
-    tuple.1 = 30;
-    tuple.2 = 1.9;
+	tuple.1 = 30;
+	tuple.2 = 1.9;
 
-    let (_, b1, c1) = tuple;
-    println!("{} {}", b1, c1);
+	let (_, b1, c1) = tuple;
+	println!("{} {}", b1, c1);
 }
 
 #[test]
 fn unit() {
-    fn unit() -> () {
-        println!("unit");
-    }
+	fn unit() -> () {
+		println!("unit");
+	}
 
-    let res = unit();
-    println!("{:?}", res);
+	let res = unit();
+	println!("{:?}", res);
 
-    let unit_pure = ();
-    println!("{:?}", unit_pure);
+	let unit_pure = ();
+	println!("{:?}", unit_pure);
 }
 
 #[test]
 fn array() {
-    let mut my_array: [u8; 5] = [1, 2, 3, 4, 5];
-    println!("{:?}", my_array);
+	let mut my_array: [u8; 5] = [1, 2, 3, 4, 5];
+	println!("{:?}", my_array);
 
-    my_array[0] = 0;
+	my_array[0] = 0;
 
-    let [a, b, _, _, _] = my_array;
-    let c = my_array[2];
-    println!("{} {} {}", a, b, c);
+	let [a, b, _, _, _] = my_array;
+	let c = my_array[2];
+	println!("{} {} {}", a, b, c);
 
-    println!("array length: {}", my_array.len());
+	println!("array length: {}", my_array.len());
 
-    assert!(a == 0);
+	assert!(a == 0);
 }
 
 #[test]
 fn two_dimensional_array() {
-    const MAXIMUM: i32 = 20;
+	const MAXIMUM: i32 = 20;
 
-    let matrix: [[u8; 2]; 2] = [[1, 2], [4, 5]];
+	let matrix: [[u8; 2]; 2] = [[1, 2], [4, 5]];
 
-    println!("{:?}, {}", matrix, MAXIMUM);
+	println!("{:?}, {}", matrix, MAXIMUM);
 }
 
 //? Stack and Heap concept memory management rust
@@ -94,159 +94,159 @@ fn two_dimensional_array() {
 
 #[test]
 fn str_slice() {
-    let str = "Hello World\r\n";
+	let str = "Hello World\r\n";
 
-    let trimmed = str.trim();
+	let trimmed = str.trim();
 
-    println!("{} {}", str, trimmed);
+	println!("{} {}", str, trimmed);
 
-    assert_eq!(trimmed, "Hello World");
+	assert_eq!(trimmed, "Hello World");
 }
 
 //* the 'String' type is a growable, UTF-8 encoded data type, so its stored on Heap
 
 #[test]
 fn string_type() {
-    let mut name: String = String::from("Hello");
-    name.push_str(" World");
+	let mut name: String = String::from("Hello");
+	name.push_str(" World");
 
-    println!("{}", name);
+	println!("{}", name);
 
-    let sparkle_heart = vec![240, 159, 146, 150];
+	let sparkle_heart = vec![240, 159, 146, 150];
 
-    // We know these bytes are valid, so we'll use `unwrap()`.
-    let sparkle_heart = String::from_utf8(sparkle_heart).unwrap();
+	// We know these bytes are valid, so we'll use `unwrap()`.
+	let sparkle_heart = String::from_utf8(sparkle_heart).unwrap();
 
-    println!("{}", sparkle_heart);
-    assert_eq!("💖", sparkle_heart);
+	println!("{}", sparkle_heart);
+	assert_eq!("💖", sparkle_heart);
 }
 
 #[test]
 fn ownership() {
-    let a: i32 = 200;
+	let a: i32 = 200;
 
-    let mut b = a; //* its just copy from value a to b
+	let mut b = a; //* its just copy from value a to b
 
-    b += 100;
+	b += 100;
 
-    println!("{} {}", a, b);
+	println!("{} {}", a, b);
 
-    //* data copy only Stack data type
-    //* klo Heap data type maka yg terjadi Ownership movement
+	//* data copy only Stack data type
+	//* klo Heap data type maka yg terjadi Ownership movement
 
-    let name1 = String::from("Hello World");
-    let name2 = name1; // its move from name1 to name2, and name1 will be removed, name1 unaccessable
-    println!("{}", name2);
+	let name1 = String::from("Hello World");
+	let name2 = name1; // its move from name1 to name2, and name1 will be removed, name1 unaccessable
+	println!("{}", name2);
 
-    let name3 = name2.clone(); // unless you want to copy so the data is newly reconstructed
-    println!("{}", name3);
+	let name3 = name2.clone(); // unless you want to copy so the data is newly reconstructed
+	println!("{}", name3);
 
-    if name2 == name3 {
-        println!("same");
-    }
+	if name2 == name3 {
+		println!("same");
+	}
 }
 
 #[test]
 fn if_statement() {
-    let num = 9;
+	let num = 9;
 
-    let res = if num > 5 {
-        "Greater than 5"
-    } else {
-        "Less than 5"
-    };
+	let res = if num > 5 {
+		"Greater than 5"
+	} else {
+		"Less than 5"
+	};
 
-    println!("{}", res);
+	println!("{}", res);
 }
 
 #[test]
 fn im_looped() {
-    let mut count: u8 = 0;
-    loop {
-        count += 1;
-        if count > 10 {
-            break;
-        } else if count % 2 == 0 {
-            continue;
-        }
+	let mut count: u8 = 0;
+	loop {
+		count += 1;
+		if count > 10 {
+			break;
+		} else if count % 2 == 0 {
+			continue;
+		}
 
-        println!("Count now: {}", count);
-    }
+		println!("Count now: {}", count);
+	}
 
-    let result = loop {
-        count += 1;
-        if count == 15 {
-            break count * 2;
-        }
-    };
+	let result = loop {
+		count += 1;
+		if count == 15 {
+			break count * 2;
+		}
+	};
 
-    println!("Result: {}", result);
+	println!("Result: {}", result);
 }
 
 #[test]
 fn looped_in_loop() {
-    let mut num = 1;
-    'outer: loop {
-        let mut i = 1;
-        'inner: loop {
-            if num > 10 {
-                break 'outer;
-            }
+	let mut num = 1;
+	'outer: loop {
+		let mut i = 1;
+		'inner: loop {
+			if num > 10 {
+				break 'outer;
+			}
 
-            println!("{} * {} = {}", num, i, num * i);
-            i += 1;
-            if i > 10 {
-                println!("\n");
-                break 'inner;
-            }
-        }
-        num += 1;
-    }
+			println!("{} * {} = {}", num, i, num * i);
+			i += 1;
+			if i > 10 {
+				println!("\n");
+				break 'inner;
+			}
+		}
+		num += 1;
+	}
 }
 
 #[test]
 fn while_looped() {
-    let mut count = 0;
-    while count < 10 {
-        count += 1;
-        println!("Hello {}", count);
-    }
+	let mut count = 0;
+	while count < 10 {
+		count += 1;
+		println!("Hello {}", count);
+	}
 }
 
 #[test]
 fn for_looped() {
-    let arr = [1, 2, 3, 4, 5];
-    for i in arr {
-        println!("{}", i);
-    }
+	let arr = [1, 2, 3, 4, 5];
+	for i in arr {
+		println!("{}", i);
+	}
 
-    let my_range_exclusive = 1..11;
-    let my_range_inclusive = 1..=10;
+	let my_range_exclusive = 1..11;
+	let my_range_inclusive = 1..=10;
 
-    println!("Start exclusive: {}", my_range_exclusive.start);
-    println!("End exclusive: {}", my_range_exclusive.end);
-    println!("Start inclusive: {}", my_range_inclusive.start());
-    println!("End inclusive: {}", my_range_inclusive.end());
+	println!("Start exclusive: {}", my_range_exclusive.start);
+	println!("End exclusive: {}", my_range_exclusive.end);
+	println!("Start inclusive: {}", my_range_inclusive.start());
+	println!("End inclusive: {}", my_range_inclusive.end());
 
-    'outer: for i in my_range_inclusive {
-        for j in 1..11 {
-            if i % 2 == 0 {
-                continue 'outer;
-            }
-            println!("{} * {} = {}", i, j, i * j);
-        }
-    }
+	'outer: for i in my_range_inclusive {
+		for j in 1..11 {
+			if i % 2 == 0 {
+				continue 'outer;
+			}
+			println!("{} * {} = {}", i, j, i * j);
+		}
+	}
 }
 
 fn factorial(n: u32) -> u32 {
-    if n < 1 {
-        return 0;
-    }
+	if n < 1 {
+		return 0;
+	}
 
-    let mut result = 1;
-    for i in 1..=n {
-        result *= i;
-    }
+	let mut result = 1;
+	for i in 1..=n {
+		result *= i;
+	}
 
-    result
+	result
 }
