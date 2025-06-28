@@ -14,6 +14,13 @@ fn main() {
 	let num: u32 = input.trim().parse().expect("Please enter a valid number");
 	let result = factorial(num);
 	println!("Factorial of {} is {}", num, result);
+
+	param_heap(String::from("Hello World"));
+	param_stack(40);
+
+	let result_tuple = keep_ownership(String::from("Adit"), String::from("Ya"));
+	println!("{} {}", result_tuple.0, result_tuple.1);
+	println!("{}", result_tuple.2);
 }
 
 #[test]
@@ -249,4 +256,36 @@ fn factorial(n: u32) -> u32 {
 	}
 
 	result
+}
+
+#[test]
+fn fn_ownership_param() {
+	let int = 10;
+	let str = String::from("Hello World");
+	param_stack(int);
+	let new_str = param_heap(str);
+	println!("{}", new_str);
+
+	let first_name = String::from("Aditya");
+	let last_name = String::from("Firman");
+
+	let (_, _, full_name) = keep_ownership(first_name, last_name);
+	println!("{}", full_name);
+}
+
+fn param_stack(int: i32) {
+	println!("{}", int);
+}
+
+fn param_heap(str: String) -> String {
+	println!("{}", str);
+
+	str
+}
+
+// At least you dont want the ownership gone
+fn keep_ownership(first_name: String, last_name: String) -> (String, String, String) {
+	let full_name = format!("{} {}", first_name, last_name);
+
+	(first_name, last_name, full_name)
 }
