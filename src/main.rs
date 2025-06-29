@@ -21,6 +21,8 @@ fn main() {
 	let result_tuple = keep_ownership(String::from("Adit"), String::from("Ya"));
 	println!("{} {}", result_tuple.0, result_tuple.1);
 	println!("{}", result_tuple.2);
+
+	let _ = full_name(&mut String::from("Adit"), &String::from("Ya"));
 }
 
 #[test]
@@ -283,9 +285,25 @@ fn param_heap(str: String) -> String {
 	str
 }
 
-// At least you dont want the ownership gone
+// * At least you dont want the ownership gone
 fn keep_ownership(first_name: String, last_name: String) -> (String, String, String) {
 	let full_name = format!("{} {}", first_name, last_name);
 
 	(first_name, last_name, full_name)
+}
+
+// * Borrowing is default immutable
+#[test]
+fn references_borrowing() {
+	let mut first_name = String::from("Aditya");
+	let last_name = String::from("Firman");
+
+	let full_name = full_name(&mut first_name, &last_name);
+	println!("{} from {} and {}", full_name, first_name, last_name);
+}
+
+// * In rust cant return reference fron a fn bcz lifetime is over
+fn full_name(first_name: &mut String, last_name: &String) -> String {
+	first_name.push('!');
+	return format!("{} {}", first_name, last_name);
 }
