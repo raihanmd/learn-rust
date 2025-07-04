@@ -307,3 +307,77 @@ fn full_name(first_name: &mut String, last_name: &String) -> String {
 	first_name.push('!');
 	return format!("{} {}", first_name, last_name);
 }
+
+#[test]
+fn slice() {
+	let arr = [1, 2, 3, 4, 5];
+	let arr_slice = &arr[1..=3];
+	let arr_slice_all = &arr[..];
+	println!("{:?}", arr_slice);
+	println!("{:?}", arr_slice_all);
+}
+
+#[test]
+fn str_slice_2() {
+	let name = String::from("Eko Kur");
+	let slice = &name[..=2];
+
+	println!("{}", slice);
+	println!("{}", name);
+}
+
+#[test]
+fn my_struct() {
+	struct House {
+		length: u32,
+		width: u32,
+		height: u32,
+		color: String,
+	}
+
+	let color = String::from("red");
+
+	let house = House {
+		length: 20,
+		width: 20,
+		height: 3,
+		// * Ownership pindah yg color
+		color,
+	};
+
+	println!("{} {} {}", house.length, house.width, house.height,);
+	println!("{}", house.color);
+
+	// * Struct update syntax
+	let new_color = String::from("blue");
+
+	// * But bruh if Heap data type, ownership pindah
+	let new_house = House {
+		color: new_color,
+		..house
+	};
+
+	// * unless do clone
+	let new_house_again = House {
+		color: new_house.color.clone(),
+		..house
+	};
+
+	println!("{}", new_house_again.color);
+	println!("{} {}", new_house.color, new_house.height);
+}
+
+#[test]
+fn tuple_struct() {
+	struct Vector2(f32, f32);
+
+	let v = Vector2(10.0, 20.0);
+	println!("{} {}", v.0, v.1);
+}
+
+#[test]
+fn struct_no_field() {
+	struct Nothing;
+
+	let _nothing = Nothing;
+}
