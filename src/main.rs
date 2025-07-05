@@ -1,6 +1,30 @@
 use std::io;
 
+mod model {
+	pub struct User {
+		pub name: String,
+		pub age: u8,
+	}
+
+	impl User {
+		pub fn say_hello(&self, name: String) {
+			println!("Hello {} my name is {}", name, self.name);
+		}
+	}
+}
+
+mod first;
+mod second;
+
+// use first::*;
+use first::{hello_world, say_hello};
+use second::say_hello as say_hello_two;
+
 fn main() {
+	say_hello(String::from("Eko"));
+	say_hello_two(String::from("Eko"));
+	hello_world();
+
 	let factorial_of = 5;
 	let result = factorial(factorial_of);
 	println!("Factorial of {} is {}", factorial_of, result);
@@ -23,6 +47,15 @@ fn main() {
 	println!("{}", result_tuple.2);
 
 	let _ = full_name(&mut String::from("Adit"), &String::from("Ya"));
+
+	let user_from_module: model::User = model::User {
+		name: String::from("Aditya"),
+		age: 20,
+	};
+
+	user_from_module.say_hello(String::from("Eko"));
+
+	println!("{}", user_from_module.age)
 }
 
 #[test]
@@ -380,4 +413,205 @@ fn struct_no_field() {
 	struct Nothing;
 
 	let _nothing = Nothing;
+}
+
+#[test]
+fn method() {
+	struct House {
+		length: u32,
+		width: u32,
+	}
+
+	// * Method
+	impl House {
+		fn get_area(&self) -> u32 {
+			self.length * self.width
+		}
+	}
+
+	let house = House {
+		length: 20,
+		width: 20,
+	};
+
+	println!("{}", house.get_area());
+
+	struct Vector2(f32, f32);
+
+	// * Associated function diff in &self on first param
+	impl Vector2 {
+		fn new(x: f32, y: f32) -> Vector2 {
+			Vector2(x, y)
+		}
+	}
+
+	let v = Vector2::new(10.0, 20.0);
+	println!("{} {}", v.0, v.1);
+}
+
+#[test]
+fn my_enum() {
+	enum Direction {
+		Up,
+		// * Test only unused do underscore
+		_Down,
+		_Left,
+		_Right,
+	}
+
+	let direction = Direction::Up;
+
+	match direction {
+		Direction::Up => println!("Up"),
+		Direction::_Down => println!("Down"),
+		Direction::_Left => println!("Left"),
+		Direction::_Right => println!("Right"),
+	}
+
+	enum Payment {
+		#[allow(dead_code)]
+		Card(String),
+		#[allow(dead_code)]
+		BankTransfer(String, String),
+	}
+
+	impl Payment {
+		fn pay(&self, amount: f64) {
+			println!("Paying {}", amount)
+		}
+	}
+
+	let _payment_card = Payment::Card(String::from("08923721388"));
+	let _payment_bank = Payment::BankTransfer(String::from("Bank BCA"), String::from("321"));
+
+	_payment_card.pay(100_000.00);
+}
+
+#[test]
+fn pattern_matching() {
+	enum Direction {
+		Up,
+		// * Test only unused do underscore
+		_Down,
+		_Left,
+		_Right,
+	}
+
+	let direction = Direction::Up;
+
+	match direction {
+		Direction::Up => {
+			println!("Up")
+		}
+		Direction::_Down => println!("Down"),
+		Direction::_Left => println!("Left"),
+		Direction::_Right => println!("Right"),
+	}
+
+	enum Payment {
+		#[allow(dead_code)]
+		Card(String),
+		#[allow(dead_code)]
+		BankTransfer(String, String),
+	}
+
+	impl Payment {
+		fn pay(&self, amount: f64) {
+			match self {
+				Payment::Card(number) => {
+					println!("Paying {} with card {}", amount, number)
+				}
+				Payment::BankTransfer(bank, num) => {
+					println!("Paying {} with bank {} {}", amount, bank, num)
+				}
+			}
+		}
+	}
+
+	let payment = Payment::Card(String::from("1234-5678-9012-3456"));
+
+	payment.pay(200.000);
+
+	let name = "Aditya";
+
+	match name {
+		"Lynx" => {
+			println!("Hello Lynx")
+		}
+		"Aditya" | "Adit" | "Eko" => {
+			println!("Hello Keluarga Aditya")
+		}
+		other => {
+			println!("Hello {}", other)
+		}
+	}
+
+	let benefit = 100_000;
+
+	match benefit {
+		0..=10_000 => {
+			println!("Low")
+		}
+		10_001..=50_000 => {
+			println!("Medium")
+		}
+		_ => {
+			println!("High")
+		}
+	}
+
+	struct GeoPoint(f32, f32);
+
+	let point = GeoPoint(0.0, 01.0);
+
+	match point {
+		// * Destructuring
+		GeoPoint(x, 0.0) => {
+			println!("Your point is on x axis: {}", x)
+		}
+		GeoPoint(_, y) => {
+			println!("Your point is on y axis: {}", y)
+		}
+	}
+
+	struct Person {
+		first_name: String,
+		last_name: String,
+	}
+
+	let person = Person {
+		first_name: String::from("Aditya"),
+		last_name: String::from("Firman"),
+	};
+
+	match person {
+		Person {
+			first_name,
+			last_name,
+		} if last_name == "Firmansyah" => {
+			println!("Hello Mr. {}", first_name)
+		}
+		Person { first_name, .. } => {
+			println!("Hello Mr. {}", first_name)
+		}
+	}
+
+	let value = 2;
+	let result = match value {
+		1 => "one",
+		2 => "two",
+		3 => "three",
+		_ => "other",
+	};
+
+	println!("{}", result);
+}
+
+#[test]
+fn type_alias() {
+	type Umur = u8;
+
+	let umur: Umur = 20;
+
+	println!("Umur: {}", umur);
 }
