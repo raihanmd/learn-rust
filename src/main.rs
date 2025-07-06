@@ -615,3 +615,51 @@ fn type_alias() {
 
 	println!("Umur: {}", umur);
 }
+
+#[test]
+fn test_use() {
+	first::foo::bar::baz();
+}
+
+#[allow(dead_code)]
+trait Animal {
+	fn name(&self) -> String;
+	fn noise(&self) -> String;
+
+	// * Default implementation
+	fn talk(&self) {
+		println!("{} says {}", self.name(), self.noise())
+	}
+}
+
+#[allow(dead_code)]
+struct Dog {
+	name: String,
+	noise: String,
+}
+
+impl Animal for Dog {
+	fn name(&self) -> String {
+		self.name.clone()
+	}
+	fn noise(&self) -> String {
+		self.noise.clone()
+	}
+}
+
+#[test]
+fn my_trait() {
+	let dog = Dog {
+		name: String::from("Dog"),
+		noise: String::from("Woof"),
+	};
+
+	dog.talk();
+	dog.noise();
+
+	fn print_talk(animal: &impl Animal) {
+		animal.talk();
+	}
+
+	print_talk(&dog)
+}
