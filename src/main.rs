@@ -633,6 +633,11 @@ trait Animal {
 }
 
 #[allow(dead_code)]
+trait Have4Legs {
+	fn legs(&self) -> u8;
+}
+
+#[allow(dead_code)]
 struct Dog {
 	name: String,
 	noise: String,
@@ -647,19 +652,180 @@ impl Animal for Dog {
 	}
 }
 
+impl Have4Legs for Dog {
+	fn legs(&self) -> u8 {
+		4
+	}
+}
+
+#[allow(dead_code)]
+fn create_animal(name: String, noise: String) -> impl Animal + Have4Legs {
+	Dog { name, noise }
+}
+
 #[test]
 fn my_trait() {
 	let dog = Dog {
-		name: String::from("Dog"),
+		name: String::from("Ascher"),
 		noise: String::from("Woof"),
 	};
 
-	dog.talk();
-	dog.noise();
+	println!("dog name {}", dog.name());
 
-	fn print_talk(animal: &impl Animal) {
+	fn print_talk(animal: &(impl Animal + Have4Legs)) {
 		animal.talk();
+		println!("{} legs", animal.legs());
 	}
 
-	print_talk(&dog)
+	let new_dog = create_animal(String::from("Frasch"), String::from("Meow"));
+
+	print_talk(&dog);
+	print_talk(&new_dog);
+
+	// * if have conflict method it can used
+	Animal::talk(&new_dog)
+}
+
+#[test]
+fn super_trait() {
+	trait AnimalWith4Legs: Animal + Have4Legs {
+		fn walk(&self) {
+			// * self.name() from trait animal
+			println!("{} is walking with 4 legs", self.name())
+		}
+	}
+
+	struct Cat {
+		name: String,
+		noise: String,
+	}
+
+	impl Animal for Cat {
+		fn name(&self) -> String {
+			self.name.clone()
+		}
+		fn noise(&self) -> String {
+			self.noise.clone()
+		}
+	}
+
+	impl Have4Legs for Cat {
+		fn legs(&self) -> u8 {
+			4
+		}
+	}
+
+	impl AnimalWith4Legs for Cat {
+		fn walk(&self) {
+			// * self.name() from trait animal
+			println!("cat {} is walking with 4 legs", self.name())
+		}
+	}
+
+	fn print_talk(animal: &impl AnimalWith4Legs) {
+		animal.talk();
+		animal.walk();
+	}
+
+	let my_cat: Cat = Cat {
+		name: String::from("Garfield"),
+		noise: String::from("Meow"),
+	};
+
+	print_talk(&my_cat);
+}
+
+#[allow(dead_code)]
+struct Point<T = i32> {
+	x: T,
+	y: T,
+}
+
+impl<T> Point<T> {
+	#[allow(dead_code)]
+	fn get_x(&self) -> &T {
+		&self.x
+	}
+	#[allow(dead_code)]
+	fn get_y(&self) -> &T {
+		&self.y
+	}
+}
+
+#[allow(dead_code)]
+enum Value<T> {
+	NONE,
+	VALUE(T),
+}
+
+#[test]
+fn generic() {
+	trait CanSayHello {
+		fn say_hello(&self);
+	}
+
+	#[allow(dead_code)]
+	trait GetValue<T>
+	where
+		T: PartialOrd,
+	{
+		fn get_value(&self) -> &T;
+	}
+
+	impl CanSayHello for Point<i32> {
+		fn say_hello(&self) {
+			println!("Hello");
+		}
+	}
+
+	impl<T> GetValue<T> for Point<T>
+	where
+		T: PartialOrd,
+	{
+		fn get_value(&self) -> &T {
+			&self.x
+		}
+	}
+
+	let my_point = Point::<i32> { x: 10, y: 20 };
+	let float = Point { x: 10.0, y: 20.0 };
+	println!("{} {}", my_point.get_x(), my_point.get_y());
+	println!("{}", my_point.get_value());
+
+	println!("float {}", float.get_value());
+
+	let my_value = Value::<i32>::VALUE(100);
+	match my_value {
+		Value::NONE => {
+			println!("NONE")
+		}
+		Value::VALUE(value) => {
+			println!("{}", value)
+		}
+	}
+
+	struct Hi<T: CanSayHello> {
+		value: T,
+	}
+
+	let hi = Hi::<Point<i32>> {
+		value: Point::<i32> { x: 10, y: 20 },
+	};
+
+	hi.value.say_hello();
+}
+
+#[allow(dead_code)]
+fn min<T: PartialOrd>(a: T, b: T) -> T {
+	if a < b {
+		a
+	} else {
+		b
+	}
+}
+
+#[test]
+fn test_min() {
+	let a = min(10, 20);
+	println!("{}", a);
 }
