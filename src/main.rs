@@ -827,5 +827,6 @@ fn min<T: PartialOrd>(a: T, b: T) -> T {
 #[test]
 fn test_min() {
 	let a = min(10, 20);
-	println!("{}", a);
+	let b = min(9, 10);
+	println!("{} {}", a, b);
 }
