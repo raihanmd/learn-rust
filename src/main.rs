@@ -1,4 +1,6 @@
-use std::io;
+use colored::*;
+use rand::Rng;
+use std::{fmt::Debug, io, ops::Add};
 
 mod model {
 	pub struct User {
@@ -55,7 +57,41 @@ fn main() {
 
 	user_from_module.say_hello(String::from("Eko"));
 
-	println!("{}", user_from_module.age)
+	println!("{}", user_from_module.age);
+
+	println!("+++++++++++++ Lets play some guessing +++++++++++++");
+
+	let secret = rand::rng().random_range(0..=100);
+
+	println!("Secret: {}", secret);
+
+	println!("Just guess some number between 1 to 100");
+
+	loop {
+		println!("Please input your guess: ");
+
+		let mut guess = String::new();
+		io::stdin()
+			.read_line(&mut guess)
+			.expect("Failed to read line");
+
+		let guess: u32 = match guess.trim().parse() {
+			Ok(num) => num,
+			Err(_) => {
+				println!("Please input correct type buddy");
+				continue;
+			}
+		};
+
+		match guess.cmp(&secret) {
+			std::cmp::Ordering::Equal => {
+				println!("{}", "You win!".green());
+				break;
+			}
+			std::cmp::Ordering::Greater => println!("{}", "Too big!".red()),
+			std::cmp::Ordering::Less => println!("{}", "Too small!".red()),
+		}
+	}
 }
 
 #[test]
@@ -829,4 +865,89 @@ fn test_min() {
 	let a = min(10, 20);
 	let b = min(9, 10);
 	println!("{} {}", a, b);
+}
+
+struct Block {
+	x: i32,
+	y: i32,
+	z: i32,
+}
+
+impl Add for Block {
+	type Output = Block;
+
+	fn add(self, rhs: Self) -> Self::Output {
+		Block {
+			x: self.x + rhs.x,
+			y: self.y + rhs.y,
+			z: self.z + rhs.z,
+		}
+	}
+}
+
+impl Debug for Block {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		f.debug_struct("Block Debug")
+			.field("x", &self.x)
+			.field("y", &self.y)
+			// .field("z", &self.z)
+			.finish()
+	}
+}
+
+// !Primitive datas use Display, but for complex one, like arr, slice using Debug
+// impl Display for Block {
+
+// }
+
+#[test]
+fn test_overradable_operator() {
+	let block_1 = Block { x: 1, y: 2, z: 3 };
+	let block_2 = Block { x: 4, y: 5, z: 6 };
+	let block_3 = block_1 + block_2;
+
+	println!("{:?}", block_3);
+	// println!("{}", block_3);
+}
+
+// Comparing ops can be implemented too in core::cmp
+#[test]
+fn optional_value() {
+	let x: Option<i32> = None; // * None is optional value
+
+	println!("{:?}", x);
+
+	let double_some = double(Some(10));
+	println!("{:?}", double_some);
+
+	let double_none = double(None);
+	println!("{:?}", double_none);
+}
+
+#[allow(dead_code)]
+fn double(x: Option<i32>) -> Option<i32> {
+	match x {
+		Some(x) => Some(x * 2),
+
+		None => None,
+	}
+}
+
+#[test]
+fn test_closure() {
+	let sum = |a: i32, b: i32| -> i32 {
+		return a + b;
+	};
+
+	println!("{}", sum(10, 20));
+
+	fn please_use_closure(val: String, callback: fn(String) -> String) {
+		println!("Result {}", callback(val));
+	}
+
+	fn to_uppercase(val: String) -> String {
+		val.to_uppercase()
+	}
+
+	please_use_closure(String::from("Hello World"), to_uppercase);
 }
