@@ -951,3 +951,73 @@ fn test_closure() {
 
 	please_use_closure(String::from("Hello World"), to_uppercase);
 }
+
+#[allow(dead_code)]
+#[derive(Debug)]
+enum IpAddress {
+	V4(u8, u8, u8, u8),
+	V6(String),
+}
+
+#[test]
+fn test_ipaddr() {
+	let ip_v4 = IpAddress::V4(192, 168, 10, 1);
+	let ip_v6 = IpAddress::V6(String::from("::1"));
+
+	println!("{:#?}", ip_v4);
+	println!("{:#?}", ip_v6);
+}
+
+#[test]
+fn test_option() {
+	let num = Some(30);
+
+	println!("{:?}", num.unwrap_or(0));
+
+	if let Some(30) = num {
+		println!("30 buddy!")
+	}
+}
+
+#[allow(dead_code)]
+enum Operation {
+	Add(i32, i32),
+	Mul(i32, i32),
+	Sub { first: i32, second: i32 },
+	Div { divident: i32, divisor: i32 },
+}
+
+#[allow(dead_code)]
+impl Operation {
+	fn execute(self) -> Result<i32, String> {
+		match self {
+			Self::Add(a, b) => Ok(a + b),
+			Self::Mul(a, b) => Ok(a * b),
+			Self::Sub { first, second } => Ok(first - second),
+			Self::Div { divident, divisor } => {
+				if divisor == 0 {
+					Err(String::from("Can not divide by zero"))
+				} else {
+					Ok(divident / divisor)
+				}
+			}
+		}
+	}
+}
+
+#[test]
+fn test_result() {
+	let user_input = Operation::Div {
+		divident: 20,
+		divisor: 0,
+	};
+	match user_input.execute() {
+		Result::Ok(res) => println!("Result: {res}"),
+		Result::Err(e) => println!("Error: {e}"),
+	}
+}
+
+#[allow(dead_code)]
+fn test_print(param: String) {
+	println!("HELLO {param}");
+}
