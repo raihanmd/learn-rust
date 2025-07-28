@@ -129,12 +129,12 @@ fn tuple() {
 
 #[test]
 fn unit() {
-	fn unit() -> () {
-		println!("unit");
-	}
+	// fn unit() -> () {
+	// 	println!("unit");
+	// }
 
-	let res = unit();
-	println!("{:?}", res);
+	// let res = unit();
+	// println!("{:?}", res);
 
 	let unit_pure = ();
 	println!("{:?}", unit_pure);
@@ -374,7 +374,7 @@ fn references_borrowing() {
 // * In rust cant return reference fron a fn bcz lifetime is over
 fn full_name(first_name: &mut String, last_name: &String) -> String {
 	first_name.push('!');
-	return format!("{} {}", first_name, last_name);
+	format!("{} {}", first_name, last_name)
 }
 
 #[test]
@@ -790,8 +790,8 @@ impl<T> Point<T> {
 
 #[allow(dead_code)]
 enum Value<T> {
-	NONE,
-	VALUE(T),
+	None,
+	Value(T),
 }
 
 #[test]
@@ -830,12 +830,12 @@ fn generic() {
 
 	println!("float {}", float.get_value());
 
-	let my_value = Value::<i32>::VALUE(100);
+	let my_value = Value::<i32>::Value(100);
 	match my_value {
-		Value::NONE => {
+		Value::None => {
 			println!("NONE")
 		}
-		Value::VALUE(value) => {
+		Value::Value(value) => {
 			println!("{}", value)
 		}
 	}
@@ -926,18 +926,12 @@ fn optional_value() {
 
 #[allow(dead_code)]
 fn double(x: Option<i32>) -> Option<i32> {
-	match x {
-		Some(x) => Some(x * 2),
-
-		None => None,
-	}
+	x.map(|x| x * 2)
 }
 
 #[test]
 fn test_closure() {
-	let sum = |a: i32, b: i32| -> i32 {
-		return a + b;
-	};
+	let sum = |a: i32, b: i32| -> i32 { a + b };
 
 	println!("{}", sum(10, 20));
 
@@ -972,7 +966,7 @@ fn test_ipaddr() {
 fn test_option() {
 	let num = Some(30);
 
-	println!("{:?}", num.unwrap_or(0));
+	println!("{:?}", num);
 
 	if let Some(30) = num {
 		println!("30 buddy!")
@@ -1020,4 +1014,109 @@ fn test_result() {
 #[allow(dead_code)]
 fn test_print(param: String) {
 	println!("HELLO {param}");
+}
+
+#[test]
+fn test_vec() {
+	let vec = vec!["Boby".to_owned(), "Aditya".to_owned()];
+
+	for item in &vec {
+		println!("{}", item);
+	}
+}
+
+#[test]
+fn hash_data_type() {
+	use std::collections::HashMap;
+
+	let mut hash_map: HashMap<String, i32> = HashMap::new();
+
+	hash_map.insert("Aditya".to_owned(), 20);
+
+	let get = hash_map.get("Aditya");
+
+	println!("HashMap Aditya: {:?}", hash_map.get("Aditya"));
+
+	if let Some(value) = get {
+		println!("Aditya is {}", value);
+	} else {
+		println!("Aditya not found");
+	}
+}
+
+#[test]
+fn btree_hash() {
+	// !Auto diurutkan, klo str dia ascending
+	let mut btree = std::collections::BTreeMap::new();
+	btree.insert("Aditya".to_owned(), 20);
+	btree.insert("Boby".to_owned(), 30);
+
+	println!("BTreeMap Aditya: {:?}", btree.get("Aditya"));
+	println!("BTreeMap Boby: {:?}", btree.get("Boby"));
+
+	for (key, value) in &btree {
+		println!("{}: {}", key, value);
+	}
+}
+
+#[test]
+fn set_data_type() {
+	// !HashSet, BTreeSet
+	use std::collections::HashSet;
+
+	let set = HashSet::from(["Aditya", "Boby", "Eko"]);
+
+	for item in &set {
+		println!("{item}");
+	}
+}
+
+#[test]
+fn js_like() {
+	let nums = [1, 2, 3, 4, 5];
+
+	let doubled: Vec<i32> = nums.iter().map(|x| x * 2).collect();
+
+	println!("Doubled: {doubled:?}");
+}
+
+#[test]
+fn error() {
+	panic!("This is a panic message");
+}
+
+#[test]
+fn question_mark_use() {
+	fn divide(a: i32, b: i32) -> Result<i32, String> {
+		if b == 0 {
+			Err(String::from("Cannot divide by zero"))
+		} else {
+			Ok(a / b)
+		}
+	}
+
+	fn calculate() -> Result<i32, String> {
+		let result = divide(10, 2)?;
+		let another_result = divide(result, 0)?;
+		Ok(another_result)
+	}
+
+	println!("{:?}", calculate());
+}
+
+#[test]
+fn lifetime_anotation() {
+	fn longest<'a>(s1: &'a str, s2: &'a str) -> &'a str {
+		if s1.len() > s2.len() {
+			s1
+		} else {
+			s2
+		}
+	}
+
+	let str1 = String::from("Hello");
+	let str2 = String::from("World");
+
+	let result = longest(&str1, &str2);
+	println!("Longest string is: {}", result);
 }
