@@ -1,6 +1,11 @@
 use colored::*;
 use rand::Rng;
-use std::{fmt::Debug, io, ops::Add};
+use std::{
+	fmt::Debug,
+	io,
+	ops::{Add, Deref},
+	rc::Rc,
+};
 
 mod model {
 	pub struct User {
@@ -1119,4 +1124,198 @@ fn lifetime_anotation() {
 
 	let result = longest(&str1, &str2);
 	println!("Longest string is: {}", result);
+}
+
+#[test]
+fn smart_pointer() {
+	let five = Box::new(5); // Box is a smart pointer that allocates memory on the heap
+	println!("Value in box: {}", five);
+
+	display_number(*five);
+	display_number_ref(&five);
+
+	fn display_number(num: i32) {
+		println!("Number in box non ref: {}", num);
+	}
+
+	fn display_number_ref(num: &i32) {
+		println!("Number in box ref: {}", num);
+	}
+}
+
+#[allow(dead_code)]
+enum Category {
+	Of(String, Box<Category>),
+	None,
+}
+
+#[test]
+fn test_recurce_enum() {
+	let category = Category::Of(
+		String::from("Electronics"),
+		Box::new(Category::Of(
+			String::from("Computers"),
+			Box::new(Category::None),
+		)),
+	);
+
+	match category {
+		Category::Of(name, sub_category) => {
+			println!("Category: {}", name);
+			if let Category::Of(sub_name, _) = *sub_category {
+				println!("Sub-category: {}", sub_name);
+			}
+		}
+		Category::None => println!("No sub-category"),
+	}
+}
+
+#[test]
+fn test_dereference() {
+	let a = Box::new(5);
+
+	println!("DOubled: {}", *a * 2)
+}
+
+#[allow(dead_code)]
+struct MyValue<T> {
+	value: T,
+}
+
+impl<T> Deref for MyValue<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
+		&self.value
+	}
+}
+
+#[test]
+fn test_deref() {
+	let my_value = MyValue { value: 10 };
+
+	// * Deref coercion
+	let x: &i32 = &my_value; // Automatically dereferenced
+	println!("Value: {}", x);
+
+	// * Can also use directly
+	println!("Value from deref: {}", *my_value);
+
+	introduce(&my_value); // Deref coercion happens here too
+
+	fn introduce(val: &i32) {
+		println!("Hello, my value is: {}", val);
+	}
+}
+
+impl<T> Drop for MyValue<T> {
+	fn drop(&mut self) {
+		println!("Dropping MyValue");
+	}
+}
+
+#[test]
+fn test_drop() {
+	let my_value = MyValue { value: 10 };
+	println!("MyValue created with value: {}", my_value.value);
+}
+
+#[allow(dead_code)]
+enum Brand {
+	Of(String, Rc<Brand>),
+	None,
+}
+
+#[test]
+fn multiple_owner() {
+	let apple = Rc::new(Brand::Of(String::from("Apple"), Rc::new(Brand::None)));
+
+	let laptop = Rc::new(Brand::Of(
+		String::from("Laptop"),
+		Rc::clone(&apple), // Cloning the Rc increases the reference count
+	));
+
+	println!("Apple: {:?}", Rc::strong_count(&apple));
+	println!("Laptop: {:?}", Rc::strong_count(&laptop));
+}
+
+#[test]
+fn ref_cell() {
+	use std::cell::RefCell;
+
+	let value = RefCell::new(5);
+
+	*value.borrow_mut() += 1;
+
+	println!("Value: {}", value.borrow());
+}
+
+#[test]
+fn ref_cell_test() {
+	use std::cell::RefCell;
+
+	#[allow(dead_code)]
+	#[derive(Debug)]
+	struct Person {
+		name: RefCell<String>,
+		age: RefCell<i32>,
+	}
+
+	let adit = Person {
+		name: RefCell::new(String::from("Aditya")),
+		age: RefCell::new(20),
+	};
+
+	{
+		let mut adit_name = adit.name.borrow_mut();
+		*adit_name = "Firman".to_string();
+	}
+
+	println!("{adit:?}");
+}
+
+#[allow(dead_code)]
+static mut GLOBAL_VAR: i32 = 10;
+
+#[allow(dead_code)]
+unsafe fn increment() {
+	GLOBAL_VAR += 1;
+}
+
+#[test]
+fn static_test() {
+	unsafe {
+		increment();
+		// println!("Global variable: {}", GLOBAL_VAR);
+	}
+}
+
+#[allow(unused_macros)]
+macro_rules! hi {
+	() => {
+		println!("Hello from macro!");
+	};
+	($name:expr) => {
+		println!("Hello, {}!", $name);
+	};
+}
+
+#[allow(unused_macros)]
+macro_rules! iterate {
+	($($item:expr),*) => {
+		$(
+			println!("{}", $item);
+		)*
+	};
+}
+
+#[test]
+fn macro_test() {
+	hi!();
+	hi!("Aditya");
+
+	hi! {
+		"Aditya 2"
+	}
+
+	iterate!(1, 2, 3, 4, 5);
 }
