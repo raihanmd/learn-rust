@@ -481,8 +481,8 @@ fn method() {
 
 	// * Associated function diff in &self on first param
 	impl Vector2 {
-		fn new(x: f32, y: f32) -> Vector2 {
-			Vector2(x, y)
+		fn new(x: f32, y: f32) -> Self {
+			Self(x, y)
 		}
 	}
 
@@ -1318,4 +1318,21 @@ fn macro_test() {
 	}
 
 	iterate!(1, 2, 3, 4, 5);
+}
+
+#[test]
+fn file() {
+	use std::fs::{self};
+	use std::io::{self};
+
+	fn read_user_from_file() -> Result<String, io::Error> {
+		// let mut content = String::new();
+		// File::open("user.txt")?.read_to_string(&mut content)?;
+		fs::read_to_string("user.txt")
+	}
+
+	match read_user_from_file() {
+		Ok(content) => println!("File content: {}", content),
+		Err(e) => println!("Error reading file: {}", e),
+	}
 }
