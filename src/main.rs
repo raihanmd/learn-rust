@@ -1086,7 +1086,7 @@ fn js_like() {
 }
 
 #[test]
-fn error() {
+fn test_error() {
 	panic!("This is a panic message");
 }
 
@@ -1336,3 +1336,12 @@ fn file() {
 		Err(e) => println!("Error reading file: {}", e),
 	}
 }
+
+#[test]
+#[ignore]
+fn feature() {
+	// This test is ignored, you can run it with `cargo test -- --ignored`
+	println!("This test is ignored");
+}
+
+// run test based on module, first name of func, etc

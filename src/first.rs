@@ -17,3 +17,18 @@ pub mod foo {
 		}
 	}
 }
+
+// This anotation for specifier to compiler that to compile this when cargo test
+#[cfg(test)]
+mod tests {
+	#[test]
+	fn test_say_hello() {
+		let name = String::from("Alice");
+		super::say_hello(name);
+	}
+
+	#[test]
+	fn test_hello_world() {
+		super::hello_world();
+	}
+}
