@@ -20,6 +20,7 @@ fn test_add_function() {
 	// Suppose your library has an `add` function
 	assert_eq!(add(2, 3), 5);
 	assert_eq!(add(3, 3), 6);
+	assert_eq!(add(3, 4), 7);
 }
 
 // cargo test --test integration_test <FILE_NAME>
