@@ -60,3 +60,29 @@ where
 		}
 	}
 }
+
+#[test]
+fn iter() {
+	let vec = [1, 2, 3];
+
+	let mut iter = vec.iter();
+	// let mut iter = vec.iter_mut();
+	// let mut iter = vec.into_iter();
+
+	assert_eq!(iter.next(), Some(&1));
+	assert_eq!(iter.next(), Some(&2));
+	// assert_eq!(iter.next(), Some(&3));
+
+	// auto call .next()
+	for val in iter.clone() {
+		print!("Got {}", val);
+	}
+
+	let total: i32 = iter.clone().sum();
+
+	assert_eq!(total, 3);
+
+	let v2 = iter.map(|val| val + 1).collect::<Vec<i32>>();
+
+	assert_eq!(v2, vec![4]);
+}
