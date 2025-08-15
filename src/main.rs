@@ -1413,3 +1413,43 @@ fn docs_closure() {
 
 	move_closure();
 }
+
+#[test]
+fn some_test() {
+	let v1 = vec![2, 4, 6, 2, 3];
+
+	let v2 = v1.iter().map(|x| x * 2).collect::<Vec<_>>();
+	// let v3_into_iter = v1.into_iter();
+
+	println!("{:?}", v1);
+	println!("{:?}", v2);
+
+	#[derive(PartialEq, Debug)]
+	struct Shoe {
+		size: u32,
+		style: String,
+	}
+
+	fn shoes_in_size(shoes: Vec<Shoe>, shoe_size: u32) -> Vec<Shoe> {
+		shoes.into_iter().filter(|s| s.size == shoe_size).collect()
+	}
+
+	let shoes = vec![
+		Shoe {
+			size: 10,
+			style: String::from("sneaker"),
+		},
+		Shoe {
+			size: 13,
+			style: String::from("sandal"),
+		},
+		Shoe {
+			size: 10,
+			style: String::from("boot"),
+		},
+	];
+
+	let in_my_size = shoes_in_size(shoes, 10);
+
+	println!("{:?}", in_my_size);
+}
