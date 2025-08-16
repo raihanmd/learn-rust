@@ -1452,4 +1452,10 @@ fn some_test() {
 	let in_my_size = shoes_in_size(shoes, 10);
 
 	println!("{:?}", in_my_size);
+
+	let items = vec!["BTC", "ETH", "SOL"];
+
+	for (i, item) in items.iter().enumerate() {
+		println!("{}. {}", i + 1, item);
+	}
 }
