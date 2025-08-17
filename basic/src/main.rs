@@ -1456,6 +1456,6 @@ fn some_test() {
 	let items = vec!["BTC", "ETH", "SOL"];
 
 	for (i, item) in items.iter().enumerate() {
-		println!("{}. {}", i + 1, item);
+		println!("No {}. {}", i + 1, item);
 	}
 }
