@@ -1459,3 +1459,21 @@ fn some_test() {
 		println!("No {}. {}", i + 1, item);
 	}
 }
+
+#[test]
+fn rc_eg() {
+	let (truck_1, truck_2, truck_3) = (Rc::new("Truck 1"), Rc::new("Truck 2"), Rc::new("Truck 3"));
+
+	let shipment_one = vec![truck_1, Rc::clone(&truck_2)];
+	let shipment_two = vec![Rc::clone(&truck_2), truck_3];
+
+	println!("{:?}", shipment_one);
+
+	println!("Truck 2 Count: {}", Rc::strong_count(&truck_2));
+
+	drop(shipment_one);
+
+	println!("Truck 2 Count: {}", Rc::strong_count(&truck_2));
+
+	println!("{:?}", shipment_two);
+}
