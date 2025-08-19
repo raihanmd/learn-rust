@@ -1557,3 +1557,50 @@ fn test_ref_cell() {
 
 	it_sends_an_over_75_percent_warning();
 }
+
+#[test]
+fn weak_sp() {
+	use std::cell::RefCell;
+	use std::rc::Weak;
+
+	#[derive(Debug)]
+	struct Node {
+		#[allow(dead_code)]
+		id: i32,
+		parent: RefCell<Weak<Node>>,
+		#[allow(dead_code)]
+		children: RefCell<Vec<Rc<Node>>>,
+	}
+
+	let leaf: Rc<Node> = Rc::new(Node {
+		id: 2,
+		parent: RefCell::new(Weak::new()),
+		children: RefCell::new(Vec::new()),
+	});
+
+	println!("Leaf parent: {:?}", leaf.parent.borrow().upgrade());
+
+	let branch: Rc<Node> = Rc::new(Node {
+		id: 1,
+		parent: RefCell::new(Weak::new()),
+		children: RefCell::new(vec![Rc::clone(&leaf)]),
+	});
+
+	println!("Branch: {branch:?}");
+
+	*leaf.parent.borrow_mut() = Rc::downgrade(&branch);
+
+	println!(
+		"Branch strong count {}, weak count {}",
+		Rc::strong_count(&branch),
+		Rc::weak_count(&branch)
+	);
+
+	println!("Leaf updated: {:?}", leaf.parent.borrow().upgrade());
+
+	println!(
+		"Leaf strong count {}, weak count {}",
+		Rc::strong_count(&leaf),
+		Rc::weak_count(&leaf)
+	);
+}
