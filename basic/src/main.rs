@@ -1453,7 +1453,7 @@ fn some_test() {
 
 	println!("{:?}", in_my_size);
 
-	let items = vec!["BTC", "ETH", "SOL"];
+	let items = ["BTC", "ETH", "SOL"];
 
 	for (i, item) in items.iter().enumerate() {
 		println!("No {}. {}", i + 1, item);
@@ -1476,4 +1476,84 @@ fn rc_eg() {
 	println!("Truck 2 Count: {}", Rc::strong_count(&truck_2));
 
 	println!("{:?}", shipment_two);
+}
+
+#[test]
+fn test_ref_cell() {
+	trait Messenger {
+		fn send(&self, message: &str);
+	}
+
+	struct LimitTracker<'a, T: Messenger> {
+		messenger: &'a T,
+		value: usize,
+		limit: usize,
+	}
+
+	impl<'a, T> LimitTracker<'a, T>
+	where
+		T: Messenger,
+	{
+		pub fn new(messenger: &T, limit: usize) -> LimitTracker<T> {
+			LimitTracker {
+				messenger,
+				value: 0,
+				limit,
+			}
+		}
+
+		pub fn set_value(&mut self, value: usize) {
+			self.value = value;
+			let percentage = self.value as f64 / self.limit as f64;
+
+			match percentage {
+				p if p >= 1.0 => {
+					self.messenger.send("Error: Limit reached!");
+				}
+				p if p >= 0.9 => {
+					self.messenger.send("Warning: 90% limit used!");
+				}
+				p if p >= 0.75 => {
+					self.messenger.send("Warning: 75% limit used!");
+				}
+				_ => {}
+			}
+		}
+	}
+
+	use std::cell::RefCell;
+
+	/// Test section
+	struct MockMessenger {
+		sent_messages: RefCell<Vec<String>>,
+	}
+
+	impl MockMessenger {
+		fn new() -> MockMessenger {
+			MockMessenger {
+				sent_messages: RefCell::new(Vec::new()),
+			}
+		}
+	}
+
+	impl Messenger for MockMessenger {
+		fn send(&self, message: &str) {
+			self.sent_messages.borrow_mut().push(message.to_string());
+		}
+	}
+
+	fn it_sends_an_over_75_percent_warning() {
+		let messenger = MockMessenger::new();
+		let mut tracker = LimitTracker::new(&messenger, 100);
+
+		tracker.set_value(80);
+
+		assert_eq!(messenger.sent_messages.borrow().len(), 1);
+		assert_eq!(
+			messenger.sent_messages.borrow()[0],
+			"Warning: 75% limit used!"
+		);
+	}
+
+	it_sends_an_over_75_percent_warning();
 }
