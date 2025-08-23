@@ -74,7 +74,7 @@ fn mutex() {
     {
         let mut num = m.lock().unwrap();
 
-        // when MutexGuard out of scope auto unlock
+        // * when MutexGuard out of scope auto unlock
 
         *num += 1;
     }

@@ -1604,3 +1604,217 @@ fn weak_sp() {
 		Rc::weak_count(&leaf)
 	);
 }
+
+#[test]
+fn polymorphism() {
+	trait Draw {
+		fn draw(&self);
+	}
+
+	struct Screen {
+		components: Vec<Box<dyn Draw>>, // polymorphic
+	}
+
+	impl Screen {
+		fn run(&self) {
+			for component in &self.components {
+				component.draw();
+			}
+		}
+	}
+
+	struct Button {
+		label: String,
+	}
+
+	impl Draw for Button {
+		fn draw(&self) {
+			println!("Button: {}", self.label);
+		}
+	}
+
+	struct SelectBox {
+		options: Vec<String>,
+	}
+
+	impl Draw for SelectBox {
+		fn draw(&self) {
+			println!("SelectBox: {:?}", self.options);
+		}
+	}
+
+	let my_screen = Screen {
+		components: vec![
+			Box::new(SelectBox {
+				options: vec![
+					String::from("Yes"),
+					String::from("No"),
+					String::from("Maybe"),
+				],
+			}),
+			Box::new(Button {
+				label: String::from("OK"),
+			}),
+			Box::new(Button {
+				label: String::from("Cancel"),
+			}),
+		],
+	};
+
+	my_screen.run();
+}
+
+#[test]
+fn state_design_pattern() {
+	trait State {
+		fn request_review(self: Box<Self>) -> Box<dyn State>;
+		fn approve(self: Box<Self>) -> Box<dyn State>;
+		fn content<'a>(&self, _: &'a Post) -> &'a str {
+			""
+		}
+	}
+
+	struct Post {
+		state: Option<Box<dyn State>>,
+		content: String,
+	}
+
+	impl Post {
+		fn new() -> Post {
+			Post {
+				state: Some(Box::new(Draft)),
+				content: String::new(),
+			}
+		}
+	}
+
+	impl Post {
+		fn add_text(&mut self, text: &str) {
+			self.content.push_str(text);
+		}
+
+		fn content(&self) -> &str {
+			self.state.as_ref().unwrap().content(self)
+		}
+
+		fn request_review(&mut self) {
+			if let Some(st) = self.state.take() {
+				self.state = Some(st.request_review());
+			}
+		}
+
+		fn approve(&mut self) {
+			if let Some(st) = self.state.take() {
+				self.state = Some(st.approve());
+			}
+		}
+	}
+
+	struct Draft;
+
+	impl State for Draft {
+		fn request_review(self: Box<Self>) -> Box<dyn State> {
+			Box::new(PendingReview)
+		}
+
+		fn approve(self: Box<Self>) -> Box<dyn State> {
+			self
+		}
+	}
+
+	struct PendingReview;
+
+	impl State for PendingReview {
+		fn request_review(self: Box<Self>) -> Box<dyn State> {
+			self
+		}
+
+		fn approve(self: Box<Self>) -> Box<dyn State> {
+			Box::new(Published)
+		}
+	}
+
+	struct Published;
+
+	impl State for Published {
+		fn request_review(self: Box<Self>) -> Box<dyn State> {
+			self
+		}
+
+		fn approve(self: Box<Self>) -> Box<dyn State> {
+			self
+		}
+
+		fn content<'a>(&self, post: &'a Post) -> &'a str {
+			&post.content
+		}
+	}
+
+	let mut post_1 = Post::new();
+
+	post_1.add_text("I ate a salad for lunch today");
+	assert_eq!("", post_1.content());
+
+	post_1.request_review();
+	assert_eq!("", post_1.content());
+
+	post_1.approve();
+	assert_eq!("I ate a salad for lunch today", post_1.content());
+}
+
+#[test]
+fn another_approach() {
+	struct Post {
+		content: String,
+	}
+
+	struct DraftPost {
+		content: String,
+	}
+
+	impl Post {
+		fn new() -> DraftPost {
+			DraftPost {
+				content: String::new(),
+			}
+		}
+
+		fn content(&self) -> &str {
+			&self.content
+		}
+	}
+
+	impl DraftPost {
+		fn add_text(&mut self, text: &str) {
+			self.content.push_str(text);
+		}
+
+		fn request_review(self) -> PendingReviewPost {
+			PendingReviewPost {
+				content: self.content,
+			}
+		}
+	}
+
+	struct PendingReviewPost {
+		content: String,
+	}
+
+	impl PendingReviewPost {
+		fn approve(self) -> Post {
+			Post {
+				content: self.content,
+			}
+		}
+	}
+
+	let mut post = Post::new();
+
+	post.add_text("Hello World");
+
+	let post = post.request_review();
+
+	let post = post.approve();
+
+	println!("{}", post.content());
+}
