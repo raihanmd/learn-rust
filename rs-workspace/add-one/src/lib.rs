@@ -1,5 +1,5 @@
-#[allow(unused_imports)]
-use rand;
+// #[allow(unused_imports)]
+// use rand;
 
 /// Adds one to the number given.
 ///
