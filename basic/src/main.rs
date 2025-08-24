@@ -1929,3 +1929,27 @@ fn advanced_trait() {
 
 	assert_eq!((mm + m).0, 2000);
 }
+
+#[test]
+fn funtion_to_pointer() {
+	fn add_one(x: i32) -> i32 {
+		x + 1
+	}
+
+	fn do_twice(f: fn(i32) -> i32, arg: i32) -> i32 {
+		f(arg) + f(arg)
+	}
+
+	let result = do_twice(add_one, 5);
+	assert_eq!(result, 12);
+}
+
+#[test]
+fn return_closure() {
+	fn make_adder(x: i32) -> impl Fn(i32) -> i32 {
+		move |y| x + y
+	}
+
+	let add_five = make_adder(5);
+	assert_eq!(add_five(10), 15);
+}
