@@ -1818,3 +1818,114 @@ fn another_approach() {
 
 	println!("{}", post.content());
 }
+
+#[test]
+fn at_symbol_at_matching() {
+	enum Msg {
+		Hello { id: i32 },
+	}
+
+	let msg = Msg::Hello { id: 5 };
+
+	match msg {
+		// @ let you store the value to the fn scope
+		Msg::Hello {
+			id: id_variable @ 3..=7,
+		} => {
+			println!("Found an id in range: {}", id_variable);
+		}
+		Msg::Hello { id: 10..12 } => {
+			println!("Found an id in another range");
+		}
+		_ => (),
+	}
+}
+
+#[allow(dead_code)]
+static mut COUNTER: i32 = 10;
+
+#[allow(dead_code)]
+fn add_counter_one() {
+	unsafe {
+		COUNTER += 1;
+	}
+}
+
+#[test]
+fn unsafe_rust() {
+	fn raw_pointer() {
+		let mut x = 5;
+		let r = &x as *const i32;
+		let mut_r = &mut x as *mut i32;
+
+		unsafe {
+			assert_eq!(*r, 5);
+			*mut_r = 10;
+			assert_eq!(*mut_r, 10);
+		}
+	}
+
+	raw_pointer();
+
+	unsafe fn danger() {}
+
+	unsafe { danger() }
+
+	extern "C" {
+		fn abs(input: i32) -> i32;
+	}
+
+	unsafe { println!("Absolute value of -3 according to C: {}", abs(-3)) };
+
+	add_counter_one();
+}
+
+#[test]
+fn advanced_trait() {
+	#[allow(dead_code)]
+	struct Counter {}
+
+	impl Iterator for Counter {
+		// * Associated types: With this approach, the Counter cant have any impl, just only u32
+		type Item = u32;
+
+		fn next(&mut self) -> Option<Self::Item> {
+			Some(0)
+		}
+	}
+
+	#[allow(dead_code)]
+	struct Point {
+		x: i32,
+		y: i32,
+	}
+
+	impl Add for Point {
+		// * This one is rada masuk akal
+		type Output = Point;
+
+		fn add(self, other: Point) -> Point {
+			Point {
+				x: self.x + other.x,
+				y: self.y + other.y,
+			}
+		}
+	}
+
+	struct Meter(u32);
+	struct MiliMeter(u32);
+
+	// * This one also hava abbiliti for adding that the right hand side is not the same type Add<Rhs=Self>
+	impl Add<Meter> for MiliMeter {
+		type Output = MiliMeter;
+
+		fn add(self, other: Meter) -> MiliMeter {
+			MiliMeter(self.0 + (other.0 * 1_000))
+		}
+	}
+
+	let m = Meter(1);
+	let mm = MiliMeter(1000);
+
+	assert_eq!((mm + m).0, 2000);
+}
