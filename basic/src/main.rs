@@ -1952,4 +1952,7 @@ fn return_closure() {
 
 	let add_five = make_adder(5);
 	assert_eq!(add_five(10), 15);
+
+	let add_five = make_adder(5);
+	assert_eq!(add_five(10), 15);
 }
