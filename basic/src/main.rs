@@ -1950,9 +1950,17 @@ fn return_closure() {
 		move |y| x + y
 	}
 
+	fn make_substract(x: i32) -> impl Fn(i32) -> i32 {
+		move |y| x + y
+	}
+
 	let add_five = make_adder(5);
 	assert_eq!(add_five(10), 15);
 
 	let add_three = make_adder(3);
 	assert_eq!(add_three(10), 13);
+
+	let substract_two = make_substract(2);
+	assert_eq!(substract_two(10), 8);
 }
+
