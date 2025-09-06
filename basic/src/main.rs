@@ -1954,6 +1954,10 @@ fn return_closure() {
 		move |y| x + y
 	}
 
+	fn _make_divide(x: i32) -> impl Fn(i32) -> i32 {
+		move |y| x / y
+	}
+
 	let add_five = make_adder(5);
 	assert_eq!(add_five(10), 15);
 
