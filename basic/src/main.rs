@@ -1915,7 +1915,7 @@ fn advanced_trait() {
 	struct Meter(u32);
 	struct MiliMeter(u32);
 
-	// * This one also hava abbiliti for adding that the right hand side is not the same type Add<Rhs=Self>
+	// * This one also hava abbility for adding that the right hand side is not the same type Add<Rhs=Self>
 	impl Add<Meter> for MiliMeter {
 		type Output = MiliMeter;
 
@@ -1967,4 +1967,3 @@ fn return_closure() {
 	let substract_two = make_substract(2);
 	assert_eq!(substract_two(10), 8);
 }
-
